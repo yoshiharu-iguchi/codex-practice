@@ -53,6 +53,13 @@
 
       button:hover { background: #15803d; }
 
+      .reset-button {
+        margin-left: 8px;
+        background: #6b7280;
+      }
+
+      .reset-button:hover { background: #4b5563; }
+
       #message {
         min-height: 1.8em;
         color: #166534;
@@ -76,11 +83,13 @@
         <p>12回中、現在4回達成</p>
       </section>
       <button type="button" id="cheer-button">今日の応援を見る</button>
+      <button type="button" id="reset-button" class="reset-button">応援を見た回数を0回に戻す</button>
       <p id="click-count">応援を見た回数：0回</p>
       <p id="message" aria-live="polite"></p>
     </main>
     <script>
       const cheerButton = document.querySelector("#cheer-button");
+      const resetButton = document.querySelector("#reset-button");
       const message = document.querySelector("#message");
       const clickCountDisplay = document.querySelector("#click-count");
       const cheers = [
@@ -89,13 +98,31 @@
         "無理せず、自分のペースでいきましょう！"
       ];
       let cheerIndex = 0;
-      let clickCount = 0;
+      const savedClickCount = Number.parseInt(
+        localStorage.getItem("cheerClickCount") ?? "0",
+        10
+      );
+      let clickCount = Number.isNaN(savedClickCount) ? 0 : savedClickCount;
+      clickCountDisplay.textContent = `応援を見た回数：${clickCount}回`;
 
       cheerButton.addEventListener("click", () => {
         message.textContent = cheers[cheerIndex];
         cheerIndex = (cheerIndex + 1) % cheers.length;
         clickCount += 1;
         clickCountDisplay.textContent = `応援を見た回数：${clickCount}回`;
+        localStorage.setItem("cheerClickCount", String(clickCount));
+      });
+
+      resetButton.addEventListener("click", () => {
+        const shouldReset = window.confirm(
+          "本当に応援を見た回数を0回に戻しますか？"
+        );
+
+        if (!shouldReset) return;
+
+        clickCount = 0;
+        clickCountDisplay.textContent = "応援を見た回数：0回";
+        localStorage.setItem("cheerClickCount", "0");
       });
     </script>
   </body>
