@@ -41,6 +41,23 @@
 
       .goal h2 { margin-top: 0; }
 
+      .workout-button {
+        background: #2563eb;
+      }
+
+      .workout-button:hover { background: #1d4ed8; }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .achievement {
+        min-height: 1.8em;
+        color: #166534;
+        font-weight: 600;
+      }
+
       button {
         padding: 12px 20px;
         border: 0;
@@ -80,7 +97,9 @@
         <h2>今月の目標</h2>
         <p>筋トレに12回取り組むこと。</p>
         <h2>今月の進み具合</h2>
-        <p>12回中、現在4回達成</p>
+        <p id="workout-count">12回中、現在4回達成</p>
+        <button type="button" id="workout-button" class="workout-button">筋トレを1回記録する</button>
+        <p id="achievement-message" class="achievement" aria-live="polite"></p>
       </section>
       <button type="button" id="cheer-button">今日の応援を見る</button>
       <button type="button" id="reset-button" class="reset-button">応援を見た回数を0回に戻す</button>
@@ -90,20 +109,41 @@
     <script>
       const cheerButton = document.querySelector("#cheer-button");
       const resetButton = document.querySelector("#reset-button");
+      const workoutButton = document.querySelector("#workout-button");
       const message = document.querySelector("#message");
       const clickCountDisplay = document.querySelector("#click-count");
+      const workoutCountDisplay = document.querySelector("#workout-count");
+      const achievementMessage = document.querySelector("#achievement-message");
       const cheers = [
         "今日も一歩ずつ。応援しています！",
         "続けることが、いちばんの力です！",
         "無理せず、自分のペースでいきましょう！"
       ];
       let cheerIndex = 0;
+      const workoutGoal = 12;
       const savedClickCount = Number.parseInt(
         localStorage.getItem("cheerClickCount") ?? "0",
         10
       );
       let clickCount = Number.isNaN(savedClickCount) ? 0 : savedClickCount;
+      const savedWorkoutCount = Number.parseInt(
+        localStorage.getItem("workoutCount") ?? "4",
+        10
+      );
+      let workoutCount = Number.isNaN(savedWorkoutCount) ? 4 : savedWorkoutCount;
       clickCountDisplay.textContent = `応援を見た回数：${clickCount}回`;
+
+      function updateWorkoutProgress() {
+        workoutCountDisplay.textContent = `12回中、現在${workoutCount}回達成`;
+        localStorage.setItem("workoutCount", String(workoutCount));
+
+        if (workoutCount >= workoutGoal) {
+          achievementMessage.textContent = "目標達成！おめでとうございます。";
+          workoutButton.disabled = true;
+        }
+      }
+
+      updateWorkoutProgress();
 
       cheerButton.addEventListener("click", () => {
         message.textContent = cheers[cheerIndex];
@@ -111,6 +151,11 @@
         clickCount += 1;
         clickCountDisplay.textContent = `応援を見た回数：${clickCount}回`;
         localStorage.setItem("cheerClickCount", String(clickCount));
+      });
+
+      workoutButton.addEventListener("click", () => {
+        workoutCount += 1;
+        updateWorkoutProgress();
       });
 
       resetButton.addEventListener("click", () => {
