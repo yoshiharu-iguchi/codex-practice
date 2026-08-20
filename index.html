@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>はじめての自己紹介ページ</title>
     <style>
+      :root {
+        --color-white: #ffffff;
+        --color-green-dark: #166534;
+        --color-green-light: #22c55e;
+        --color-blue: #2563eb;
+        --color-blue-hover: #1d4ed8;
+      }
+
       body {
         max-width: 680px;
         margin: 64px auto;
@@ -17,7 +25,7 @@
 
       main {
         padding: 36px;
-        background: #ffffff;
+        background: var(--color-white);
         border: 1px solid #bbf7d0;
         border-radius: 28px;
         box-shadow: 0 12px 30px rgba(22, 101, 52, 0.12);
@@ -25,17 +33,17 @@
 
       h1 {
         color: #15803d;
-        border-bottom: 2px solid #22c55e;
+        border-bottom: 2px solid var(--color-green-light);
         padding-bottom: 12px;
       }
 
-      h2 { color: #166534; }
+      h2 { color: var(--color-green-dark); }
 
       .goal {
         margin-top: 28px;
         padding: 18px;
         background: #eff6ff;
-        border-left: 5px solid #22c55e;
+        border-left: 5px solid var(--color-green-light);
         border-radius: 14px;
       }
 
@@ -58,21 +66,21 @@
         font: inherit;
       }
 
-      .goal-settings button { background: #2563eb; }
+      .goal-settings button { background: var(--color-blue); }
 
-      .goal-settings button:hover { background: #1d4ed8; }
+      .goal-settings button:hover { background: var(--color-blue-hover); }
 
       .goal-status {
         min-height: 1.8em;
-        color: #166534;
+        color: var(--color-green-dark);
         font-weight: 600;
       }
 
       .workout-button {
-        background: #2563eb;
+        background: var(--color-blue);
       }
 
-      .workout-button:hover { background: #1d4ed8; }
+      .workout-button:hover { background: var(--color-blue-hover); }
 
       button:disabled {
         cursor: not-allowed;
@@ -81,7 +89,7 @@
 
       .achievement {
         min-height: 1.8em;
-        color: #166534;
+        color: var(--color-green-dark);
         font-weight: 600;
       }
 
@@ -108,7 +116,7 @@
         border: 0;
         border-radius: 999px;
         background: #16a34a;
-        color: #ffffff;
+        color: var(--color-white);
         cursor: pointer;
         font-size: 1rem;
       }
@@ -129,7 +137,7 @@
 
       #message {
         min-height: 1.8em;
-        color: #166534;
+        color: var(--color-green-dark);
         font-weight: 600;
       }
 
