@@ -220,22 +220,26 @@
         "無理せず、自分のペースでいきましょう！"
       ];
       let cheerIndex = 0;
+      const DEFAULT_WORKOUT_COUNT = 4;
+      const DEFAULT_WORKOUT_GOAL = 12;
       const savedClickCount = Number.parseInt(
         localStorage.getItem("cheerClickCount") ?? "0",
         10
       );
       let clickCount = Number.isNaN(savedClickCount) ? 0 : savedClickCount;
       const savedWorkoutCount = Number.parseInt(
-        localStorage.getItem("workoutCount") ?? "4",
+        localStorage.getItem("workoutCount") ?? String(DEFAULT_WORKOUT_COUNT),
         10
       );
-      let workoutCount = Number.isNaN(savedWorkoutCount) ? 4 : savedWorkoutCount;
+      let workoutCount = Number.isNaN(savedWorkoutCount)
+        ? DEFAULT_WORKOUT_COUNT
+        : savedWorkoutCount;
       const savedWorkoutGoal = Number.parseInt(
-        localStorage.getItem("workoutGoal") ?? "12",
+        localStorage.getItem("workoutGoal") ?? String(DEFAULT_WORKOUT_GOAL),
         10
       );
       let workoutGoal = Number.isNaN(savedWorkoutGoal) || savedWorkoutGoal < 1
-        ? 12
+        ? DEFAULT_WORKOUT_GOAL
         : savedWorkoutGoal;
       let workoutHistory = loadWorkoutHistory();
       clickCountDisplay.textContent = `応援を見た回数：${clickCount}回`;
