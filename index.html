@@ -85,6 +85,17 @@
         font-weight: 600;
       }
 
+      .history {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid #bfdbfe;
+      }
+
+      .history ul {
+        margin: 8px 0 0;
+        padding-left: 1.4rem;
+      }
+
       button {
         padding: 12px 20px;
         border: 0;
@@ -169,6 +180,11 @@
         <p id="workout-count">12回中、現在4回達成</p>
         <button type="button" id="workout-button" class="workout-button">筋トレを1回記録する</button>
         <p id="achievement-message" class="achievement" aria-live="polite"></p>
+        <section class="history" aria-labelledby="history-heading">
+          <h2 id="history-heading">記録した日</h2>
+          <p id="history-empty">まだ日付の記録はありません。</p>
+          <ul id="history-list"></ul>
+        </section>
       </section>
       <button type="button" id="cheer-button">今日の応援を見る</button>
       <button type="button" id="reset-button" class="reset-button">応援を見た回数を0回に戻す</button>
@@ -187,6 +203,8 @@
       const goalDescription = document.querySelector("#goal-description");
       const goalInput = document.querySelector("#goal-input");
       const goalStatus = document.querySelector("#goal-status");
+      const historyList = document.querySelector("#history-list");
+      const historyEmpty = document.querySelector("#history-empty");
       const cheers = [
         "今日も一歩ずつ。応援しています！",
         "続けることが、いちばんの力です！",
@@ -210,7 +228,65 @@
       let workoutGoal = Number.isNaN(savedWorkoutGoal) || savedWorkoutGoal < 1
         ? 12
         : savedWorkoutGoal;
+      let workoutHistory = loadWorkoutHistory();
       clickCountDisplay.textContent = `応援を見た回数：${clickCount}回`;
+
+      function loadWorkoutHistory() {
+        try {
+          const savedHistory = JSON.parse(localStorage.getItem("workoutHistory") ?? "[]");
+
+          if (!Array.isArray(savedHistory)) return [];
+
+          return savedHistory.filter((entry) => (
+            typeof entry.date === "string"
+            && Number.isInteger(entry.count)
+            && entry.count > 0
+          ));
+        } catch {
+          return [];
+        }
+      }
+
+      function getTodayKey() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+      }
+
+      function formatHistoryDate(date) {
+        const [year, month, day] = date.split("-");
+        return `${Number(year)}年${Number(month)}月${Number(day)}日`;
+      }
+
+      function renderWorkoutHistory() {
+        historyList.replaceChildren();
+        const newestFirst = [...workoutHistory].sort((a, b) => b.date.localeCompare(a.date));
+
+        newestFirst.forEach((entry) => {
+          const item = document.createElement("li");
+          item.textContent = `${formatHistoryDate(entry.date)}：${entry.count}回`;
+          historyList.append(item);
+        });
+
+        historyEmpty.hidden = workoutHistory.length > 0;
+      }
+
+      function recordWorkoutHistory() {
+        const today = getTodayKey();
+        const todayEntry = workoutHistory.find((entry) => entry.date === today);
+
+        if (todayEntry) {
+          todayEntry.count += 1;
+        } else {
+          workoutHistory.push({ date: today, count: 1 });
+        }
+
+        localStorage.setItem("workoutHistory", JSON.stringify(workoutHistory));
+        renderWorkoutHistory();
+      }
 
       function updateWorkoutProgress() {
         goalDescription.textContent = `筋トレに${workoutGoal}回取り組むこと。`;
@@ -229,6 +305,7 @@
       }
 
       updateWorkoutProgress();
+      renderWorkoutHistory();
 
       cheerButton.addEventListener("click", () => {
         message.textContent = cheers[cheerIndex];
@@ -240,6 +317,7 @@
 
       workoutButton.addEventListener("click", () => {
         workoutCount += 1;
+        recordWorkoutHistory();
         updateWorkoutProgress();
       });
 
