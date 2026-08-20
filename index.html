@@ -96,6 +96,13 @@
         padding-left: 1.4rem;
       }
 
+      .monthly-reset-button {
+        margin-top: 16px;
+        background: #b91c1c;
+      }
+
+      .monthly-reset-button:hover { background: #991b1b; }
+
       button {
         padding: 12px 20px;
         border: 0;
@@ -184,6 +191,7 @@
           <h2 id="history-heading">記録した日</h2>
           <p id="history-empty">まだ日付の記録はありません。</p>
           <ul id="history-list"></ul>
+          <button type="button" id="monthly-reset-button" class="monthly-reset-button">今月の記録をリセットする</button>
         </section>
       </section>
       <button type="button" id="cheer-button">今日の応援を見る</button>
@@ -196,6 +204,7 @@
       const resetButton = document.querySelector("#reset-button");
       const workoutButton = document.querySelector("#workout-button");
       const goalButton = document.querySelector("#goal-button");
+      const monthlyResetButton = document.querySelector("#monthly-reset-button");
       const message = document.querySelector("#message");
       const clickCountDisplay = document.querySelector("#click-count");
       const workoutCountDisplay = document.querySelector("#workout-count");
@@ -332,6 +341,20 @@
         workoutGoal = nextWorkoutGoal;
         updateWorkoutProgress();
         goalStatus.textContent = `今月の目標を${workoutGoal}回に変更しました。`;
+      });
+
+      monthlyResetButton.addEventListener("click", () => {
+        const shouldReset = window.confirm(
+          "今月の筋トレ回数と日付一覧を0回・空の状態に戻します。\nこの操作は取り消せません。続けますか？"
+        );
+
+        if (!shouldReset) return;
+
+        workoutCount = 0;
+        workoutHistory = [];
+        localStorage.setItem("workoutHistory", "[]");
+        updateWorkoutProgress();
+        renderWorkoutHistory();
       });
 
       resetButton.addEventListener("click", () => {
