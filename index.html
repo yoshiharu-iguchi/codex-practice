@@ -295,6 +295,12 @@
         historyEmpty.hidden = workoutHistory.length > 0;
       }
 
+      function saveWorkoutData() {
+        localStorage.setItem("workoutCount", String(workoutCount));
+        localStorage.setItem("workoutGoal", String(workoutGoal));
+        localStorage.setItem("workoutHistory", JSON.stringify(workoutHistory));
+      }
+
       function recordWorkoutHistory() {
         const today = getTodayKey();
         const todayEntry = workoutHistory.find((entry) => entry.date === today);
@@ -305,7 +311,6 @@
           workoutHistory.push({ date: today, count: 1 });
         }
 
-        localStorage.setItem("workoutHistory", JSON.stringify(workoutHistory));
         renderWorkoutHistory();
       }
 
@@ -313,9 +318,7 @@
         goalDescription.textContent = `筋トレに${workoutGoal}回取り組むこと。`;
         goalInput.value = String(workoutGoal);
         workoutCountDisplay.textContent = `${workoutGoal}回中、現在${workoutCount}回達成`;
-        localStorage.setItem("workoutCount", String(workoutCount));
-        localStorage.setItem("workoutGoal", String(workoutGoal));
-
+        saveWorkoutData();
         if (workoutCount >= workoutGoal) {
           achievementMessage.textContent = "目標達成！おめでとうございます。";
           workoutButton.disabled = true;
@@ -364,7 +367,6 @@
 
         workoutCount = 0;
         workoutHistory = [];
-        localStorage.setItem("workoutHistory", "[]");
         updateWorkoutProgress();
         renderWorkoutHistory();
       });
