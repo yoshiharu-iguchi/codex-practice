@@ -194,6 +194,7 @@
         <h2>今月の進み具合</h2>
         <p id="workout-count">12回中、現在4回達成</p>
         <button type="button" id="workout-button" class="workout-button">筋トレを1回記録する</button>
+        <button type="button" id="workout-undo-button" disabled>今日の記録を1回取り消す</button>
         <p id="achievement-message" class="achievement" aria-live="polite"></p>
         <section class="history" aria-labelledby="history-heading">
           <h2 id="history-heading">記録した日</h2>
@@ -211,6 +212,7 @@
       const cheerButton = document.querySelector("#cheer-button");
       const resetButton = document.querySelector("#reset-button");
       const workoutButton = document.querySelector("#workout-button");
+      const workoutUndoButton = document.querySelector("#workout-undo-button");
       const goalButton = document.querySelector("#goal-button");
       const monthlyResetButton = document.querySelector("#monthly-reset-button");
       const message = document.querySelector("#message");
@@ -314,11 +316,35 @@
         renderWorkoutHistory();
       }
 
+      function undoTodayWorkoutRecord() {
+        const today = getTodayKey();
+        const todayEntryIndex = workoutHistory.findIndex((entry) => entry.date === today);
+
+        if (workoutCount === 0 || todayEntryIndex === -1) return;
+
+        workoutCount -= 1;
+        workoutHistory[todayEntryIndex].count -= 1;
+
+        if (workoutHistory[todayEntryIndex].count === 0) {
+          workoutHistory.splice(todayEntryIndex, 1);
+        }
+
+        renderWorkoutHistory();
+      }
+
+      function updateWorkoutUndoButton() {
+        const today = getTodayKey();
+        const hasTodayRecord = workoutHistory.some((entry) => entry.date === today);
+
+        workoutUndoButton.disabled = workoutCount === 0 || !hasTodayRecord;
+      }
+
       function updateWorkoutProgress() {
         goalDescription.textContent = `筋トレに${workoutGoal}回取り組むこと。`;
         goalInput.value = String(workoutGoal);
         workoutCountDisplay.textContent = `${workoutGoal}回中、現在${workoutCount}回達成`;
         saveWorkoutData();
+        updateWorkoutUndoButton();
         if (workoutCount >= workoutGoal) {
           achievementMessage.textContent = "目標達成！おめでとうございます。";
           workoutButton.disabled = true;
@@ -342,6 +368,17 @@
       workoutButton.addEventListener("click", () => {
         workoutCount += 1;
         recordWorkoutHistory();
+        updateWorkoutProgress();
+      });
+
+      workoutUndoButton.addEventListener("click", () => {
+        const shouldUndo = window.confirm(
+          "今日の筋トレ記録を1回取り消します。よろしいですか？"
+        );
+
+        if (!shouldUndo) return;
+
+        undoTodayWorkoutRecord();
         updateWorkoutProgress();
       });
 
