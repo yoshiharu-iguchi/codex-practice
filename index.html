@@ -191,11 +191,11 @@
       <section class="goal">
         <h2>今月の目標</h2>
         <p id="goal-description">筋トレに12回取り組むこと。</p>
-        <div class="goal-settings">
+        <form id="goal-form" class="goal-settings">
           <label for="goal-input">目標回数</label>
           <input id="goal-input" type="number" min="1" step="1" value="12" />
-          <button type="button" id="goal-button">目標を変更する</button>
-        </div>
+          <button type="submit" id="goal-button">目標を変更する</button>
+        </form>
         <p id="goal-status" class="goal-status" aria-live="polite"></p>
         <h2>今月の進み具合</h2>
         <p id="workout-count">12回中、現在4回達成</p>
@@ -221,7 +221,7 @@
       const resetButton = document.querySelector("#reset-button");
       const workoutButton = document.querySelector("#workout-button");
       const workoutUndoButton = document.querySelector("#workout-undo-button");
-      const goalButton = document.querySelector("#goal-button");
+      const goalForm = document.querySelector("#goal-form");
       const monthlyResetButton = document.querySelector("#monthly-reset-button");
       const message = document.querySelector("#message");
       const clickCountDisplay = document.querySelector("#click-count");
@@ -397,7 +397,7 @@
         updateWorkoutProgress();
       });
 
-      goalButton.addEventListener("click", () => {
+      function changeWorkoutGoal() {
         const nextWorkoutGoal = Number(goalInput.value);
 
         if (!Number.isInteger(nextWorkoutGoal) || nextWorkoutGoal < 1) {
@@ -408,6 +408,11 @@
         workoutGoal = nextWorkoutGoal;
         updateWorkoutProgress();
         goalStatus.textContent = `今月の目標を${workoutGoal}回に変更しました。`;
+      }
+
+      goalForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        changeWorkoutGoal();
       });
 
       monthlyResetButton.addEventListener("click", () => {
