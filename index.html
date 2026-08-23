@@ -201,6 +201,7 @@
         <p id="workout-count">12回中、現在4回達成</p>
         <label for="workout-progress">今月の筋トレ目標の進み具合</label>
         <progress id="workout-progress" class="workout-progress" value="4" max="12">4回 / 12回</progress>
+        <p id="workout-percentage" aria-live="polite">達成率:33%</p>
         <button type="button" id="workout-button" class="workout-button">筋トレを1回記録する</button>
         <button type="button" id="workout-undo-button" disabled>今日の記録を1回取り消す</button>
         <p id="achievement-message" class="achievement" aria-live="polite"></p>
@@ -227,6 +228,7 @@
       const clickCountDisplay = document.querySelector("#click-count");
       const workoutCountDisplay = document.querySelector("#workout-count");
       const workoutProgress = document.querySelector("#workout-progress");
+      const workoutPercentageDisplay = document.querySelector("#workout-percentage");
       const achievementMessage = document.querySelector("#achievement-message");
       const goalDescription = document.querySelector("#goal-description");
       const goalInput = document.querySelector("#goal-input");
@@ -354,6 +356,11 @@
         workoutCountDisplay.textContent = `${workoutGoal}回中、現在${workoutCount}回達成`;
         workoutProgress.max = workoutGoal;
         workoutProgress.value = Math.min(workoutCount, workoutGoal);
+        const workoutPercentage = Math.min(
+          Math.round((workoutCount / workoutGoal) * 100),
+          100
+        );
+        workoutPercentageDisplay.textContent = `達成率:${workoutPercentage}%`;
         workoutProgress.setAttribute(
           "aria-valuetext",
           `${workoutGoal}回中、現在${workoutCount}回達成`
